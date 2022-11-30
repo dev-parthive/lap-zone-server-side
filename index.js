@@ -37,6 +37,14 @@ async function dbConnect(){
 dbConnect();
 // --------------------
 const productCollection = client.db("Lap-Zone").collection("products")
+const usersCollection = client.db("Lap-Zone").collection("users")
 
-
+// register kora users er data database a store korar jonno 
+app.post('/users', async(req, res)=>{
+    const user = req.body
+    // console.log(user)
+    const result = await usersCollection.insertOne(user);
+    res.send(result)
+    
+})
 app.listen(port, ()=> console.log('server is running '.blue))
