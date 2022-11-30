@@ -39,6 +39,9 @@ dbConnect();
 const productCollection = client.db("Lap-Zone").collection("products")
 const usersCollection = client.db("Lap-Zone").collection("users")
 
+
+// end point 
+
 // register kora users er data database a store korar jonno 
 app.post('/users', async(req, res)=>{
     const user = req.body
@@ -46,5 +49,24 @@ app.post('/users', async(req, res)=>{
     const result = await usersCollection.insertOne(user);
     res.send(result)
     
+})
+
+// to get specific category product 
+app.get('/products/:name', async(req, res)=>{
+    try{
+        const name = req.params.name
+        // console.log(name)
+        const products = await productCollection.find({brand: name}).toArray()
+        res.send({
+            success: true, 
+            data : products
+        })
+    }
+    catch(err){
+        res.send({
+            success: false, 
+            error: err.message
+        })
+    }
 })
 app.listen(port, ()=> console.log('server is running '.blue))
