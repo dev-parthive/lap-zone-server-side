@@ -173,5 +173,17 @@ app.get('/allsellers', async(req, res)=>{
         res.send(err.message)
     }
 })
+// all buyers load api 
+app.get('/allbuyer', async(req, res)=>{
+    try{
+        const query = {role: 'buyer'}
+        const buyers = await usersCollection.find(query).toArray()
+        res.send(buyers)
+    }
+    catch(err){
+        console.log(err.message)
+        res.send(err.message)
+    }
+})
 
 app.listen(port, ()=> console.log('server is running '.blue))
