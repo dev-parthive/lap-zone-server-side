@@ -161,4 +161,17 @@ app.get('/orders', verifyJWT , async(req, res)=>{
 })
 
 
+// all sellers laod api 
+app.get('/allsellers', async(req, res)=>{
+    try{
+        const query = {role: 'seller'}
+        const sellers = await usersCollection.find(query).toArray()
+        res.send(sellers)
+    }
+    catch(err){
+        console.log(err.message)
+        res.send(err.message)
+    }
+})
+
 app.listen(port, ()=> console.log('server is running '.blue))
