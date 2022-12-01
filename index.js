@@ -3,9 +3,10 @@ const cors = require('cors')
 const port = process.env.PORT || 5000 ;
 const app = express()
 const { MongoClient, ServerApiVersion } = require('mongodb');
-
+const jwt = require('jsonwebtoken')
 require('dotenv').config()
 require('colors')
+
 //middleware
 app.use(cors());
 app.use(express.json())
@@ -45,10 +46,16 @@ const ordersCollection = client.db("Lap-Zone").collection("orders")
 
 // register kora users er data database a store korar jonno 
 app.post('/users', async(req, res)=>{
+ try{
     const user = req.body
     // console.log(user)
     const result = await usersCollection.insertOne(user);
     res.send(result)
+ }
+ catch(err){
+    console.loog(err.message)
+    res.send(err.message)
+ }
     
 })
 
@@ -93,6 +100,21 @@ app.post('/orders' , async(req,res)=>{
         
 })
 
+// jsonwebtoken generator api 
+app.get('/jwt' , async(req, res)=>{
+    const email = req.query.email;
+    const query = {email: email}
+    const user = await usersCollection.findOne(query)
+    console.log(user)
+     
+    if(user){
+        const token = jwt.sign({email}, process.env.ACCESS_TOKEN, {expiresIn: '10h'})
+        return res.send({
+            accessToken  : token
+        })
+    }
+    res.status(403).send({accessToken: ''})
+})
 
 
 app.listen(port, ()=> console.log('server is running '.blue))
