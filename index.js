@@ -215,4 +215,33 @@ app.delete('/seller/:id', async(req, res)=>{
     }
 })
 
+// delete specific buyer 
+app.delete('/buyer/:id', async(req, res)=>{
+    try{
+        const id = req.params.id
+        const query = ({_id: ObjectId(id)})
+        const result = await usersCollection.deleteOne(query)
+        if(result.deletedCount){
+            res.send({
+                success: true, 
+                message: 'Buyer deleted successfully'
+
+            })
+        }
+        else{
+            res.send({
+                success: false, 
+                message: "something went wrong "
+
+            })
+        }
+    }
+    catch(err){
+        res.send({
+            success: false, 
+            message: err.message
+        })
+    }
+})
+
 app.listen(port, ()=> console.log('server is running '.blue))
