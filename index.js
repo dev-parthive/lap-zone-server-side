@@ -244,4 +244,26 @@ app.delete('/buyer/:id', async(req, res)=>{
     }
 })
 
+// user verification apoi 
+
+app.put('/sellers/verfication/:id', async(req,res)=>{
+    try{
+        const id = req.params.id
+        console.log(id)
+    const filter = {_id: ObjectId(id)}
+    const options = {upsert: true };
+    const updatedDoc = {
+        $set:{
+            verification: "verified"
+        }
+    }
+    const result = await usersCollection.updateOne(filter , updatedDoc, options)
+    res.send(result)
+    }
+    catch(err){
+        console.log(err.message)
+        res.send(err.message)
+    }
+})
+
 app.listen(port, ()=> console.log('server is running '.blue))
