@@ -11,6 +11,23 @@ require('colors')
 app.use(cors());
 app.use(express.json())
 
+// verify jwt middleware 
+function verifyJWT(req, res ,  next ){
+    console.log('token' , req.headers.authorization)
+    const authHeader = req.headers.authorization; 
+    if(!authHeader){
+        return res.status(401).send('Forbiden access')
+    }
+    const token = authHeader.split(' ')[1]
+    jwt.verify(token, process.env.ACCESS_TOKEN, (err, decoded)=>{
+        if(err){
+            return res.send({message: 'forbidded access'})
+        }
+        req.decoded = decoded; 
+
+        next()
+    })
+}
 
 //endpont 
 app.get('/' , async(req, res)=>{
@@ -117,10 +134,19 @@ app.get('/jwt' , async(req, res)=>{
 })
 
 // speciifc user orders load api 
-app.get('/orders', async(req, res)=>{
+app.get('/orders', verifyJWT , async(req, res)=>{
   try{
     const email = req.query.email
     // console.log(email)
+    // console.log('token' , req.headers.authorization)
+    const decodeEmail = req.decoded.email;
+    console.log(decodeEmail)
+    if(email != decodeEmail){
+        return res.send({
+            success: false,
+            message: 'Forbidden access of not having access token '
+        })
+    }
     const query  = {userEamil: email}
     const orders = await ordersCollection.find(query).toArray()
     res.send(orders)
