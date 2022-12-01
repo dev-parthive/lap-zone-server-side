@@ -116,5 +116,23 @@ app.get('/jwt' , async(req, res)=>{
     res.status(403).send({accessToken: ''})
 })
 
+// speciifc user orders load api 
+app.get('/orders', async(req, res)=>{
+  try{
+    const email = req.query.email
+    // console.log(email)
+    const query  = {userEamil: email}
+    const orders = await ordersCollection.find(query).toArray()
+    res.send(orders)
+  }
+  catch(err){
+    console.log(err.message)
+    res.send({
+        success: false, 
+        message: "Data couldn't loaded from DB"
+    })
+  }
+})
+
 
 app.listen(port, ()=> console.log('server is running '.blue))
