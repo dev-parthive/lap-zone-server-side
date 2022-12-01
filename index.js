@@ -2,7 +2,7 @@ const express = require('express')
 const cors = require('cors')
 const port = process.env.PORT || 5000 ;
 const app = express()
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const jwt = require('jsonwebtoken')
 require('dotenv').config()
 require('colors')
@@ -183,6 +183,35 @@ app.get('/allbuyer', async(req, res)=>{
     catch(err){
         console.log(err.message)
         res.send(err.message)
+    }
+})
+
+// delete specific buyer using email 
+app.delete('/seller/:id', async(req, res)=>{
+    try{
+        const id = req.params.id
+        const query = ({_id: ObjectId(id)})
+        const result = await usersCollection.deleteOne(query)
+        if(result.deletedCount){
+            res.send({
+                success: true, 
+                message: 'Seller deleted successfully'
+
+            })
+        }
+        else{
+            res.send({
+                success: false, 
+                message: "something went wrong "
+
+            })
+        }
+    }
+    catch(err){
+        res.send({
+            success: false, 
+            message: err.message
+        })
     }
 })
 
