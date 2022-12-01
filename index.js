@@ -3,7 +3,8 @@ const cors = require('cors')
 const port = process.env.PORT || 5000 ;
 const app = express()
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
-const jwt = require('jsonwebtoken')
+const jwt = require('jsonwebtoken');
+const { query } = require('express');
 require('dotenv').config()
 require('colors')
 
@@ -139,9 +140,9 @@ app.get('/orders', verifyJWT , async(req, res)=>{
     const email = req.query.email
     // console.log(email)
     // console.log('token' , req.headers.authorization)
-    const decodeEmail = req.decoded.email;
-    console.log(decodeEmail)
-    if(email != decodeEmail){
+    const decodedEmail = req.decoded.email;
+    console.log(decodedEmail)
+    if(email != decodedEmail){
         return res.send({
             success: false,
             message: 'Forbidden access of not having access token '
@@ -246,8 +247,17 @@ app.delete('/buyer/:id', async(req, res)=>{
 
 // user verification apoi 
 
-app.put('/sellers/verfication/:id', async(req,res)=>{
+app.put('/sellers/verfication/:id', verifyJWT,  async(req,res)=>{
     try{
+        const decodedEmail = req.decoded.email;
+    console.log(decodedEmail)
+        const query = {email: decodedEmail}
+        const user  = await usersCollection.findOne(query)
+        if(user?.role !=='admin'){
+            return res.send({success: false ,message: 'forbiden access'})
+        }
+
+
         const id = req.params.id
         console.log(id)
     const filter = {_id: ObjectId(id)}
@@ -258,7 +268,10 @@ app.put('/sellers/verfication/:id', async(req,res)=>{
         }
     }
     const result = await usersCollection.updateOne(filter , updatedDoc, options)
-    res.send(result)
+    res.send({
+        success: true, 
+        data: result
+    })
     }
     catch(err){
         console.log(err.message)
