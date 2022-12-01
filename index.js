@@ -20,7 +20,7 @@ app.get('/' , async(req, res)=>{
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.afdwhlk.mongodb.net/?retryWrites=true&w=majority`;
 // console.log(uri)
-// client  k use kore ami database theke data nibo 
+
 
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
@@ -38,6 +38,7 @@ dbConnect();
 // --------------------
 const productCollection = client.db("Lap-Zone").collection("products")
 const usersCollection = client.db("Lap-Zone").collection("users")
+const ordersCollection = client.db("Lap-Zone").collection("orders")
 
 
 // end point 
@@ -69,4 +70,29 @@ app.get('/products/:name', async(req, res)=>{
         })
     }
 })
+
+// client  k use kore ami database theke data nibo 
+//takes order from buyer/cutomer 
+app.post('/orders' , async(req,res)=>{
+   try{
+    const order = req.body;
+    // console.log(order)
+    const result = await ordersCollection.insertOne(order);
+    res.send({
+        success: true , 
+        message: 'Order Booked ',
+        data: result
+    })
+   }
+   catch(err){
+    res.send({
+        success: false, 
+        message: 'something went wrong '
+    })
+   }
+        
+})
+
+
+
 app.listen(port, ()=> console.log('server is running '.blue))
