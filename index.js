@@ -245,7 +245,7 @@ app.delete('/buyer/:id', async(req, res)=>{
     }
 })
 
-// user verification apoi 
+// seller verification api 
 
 app.put('/sellers/verfication/:id', verifyJWT,  async(req,res)=>{
     try{
@@ -274,7 +274,7 @@ app.put('/sellers/verfication/:id', verifyJWT,  async(req,res)=>{
     })
     }
     catch(err){
-        console.log(err.message)
+        console.log(`${err.message}`.bgRed)
         res.send(err.message)
     }
 })
@@ -285,6 +285,13 @@ app.get('/users/admin/:email', async (req, res) => {
     const query = { email }
     const user = await usersCollection.findOne(query)
     res.send({ isdAdmin: user?.role === 'admin' })
+})
+// seller role check api 
+app.get('/users/seller/:email', async (req, res) => {
+    const email = req.params.email;
+    const query = { email }
+    const user = await usersCollection.findOne(query)
+    res.send({ isSeller: user?.role === 'seller' })
 })
 
 app.listen(port, ()=> console.log('server is running '.blue))
