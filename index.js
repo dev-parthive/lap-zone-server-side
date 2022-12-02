@@ -306,4 +306,11 @@ app.get('/users/buyer/:email', async (req, res) => {
     res.send({ isBuyer: user?.role === 'buyer' })
 })
 
+// add product er data product collection a patanor jonno 
+app.post('/products', async(req, res) =>{
+    const product = req.body;
+  const result = await productCollection.insertOne(product)  
+  res.send(result)
+})
+
 app.listen(port, ()=> console.log('server is running '.blue))
