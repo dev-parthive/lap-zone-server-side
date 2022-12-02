@@ -363,4 +363,57 @@ app.delete('/product/delete/:id', async(req, res) =>{
     }
 })
 
+
+
+// advertise set  api 
+
+app.put('/product/advertise/:id', verifyJWT,  async(req,res)=>{
+    try{
+        const decodedEmail = req.decoded.email;
+    console.log(decodedEmail)
+        const query = {email: decodedEmail}
+        const user  = await usersCollection.findOne(query)
+        if(user?.role !=='seller'){
+            return res.send({success: false ,message: 'forbiden access'})
+        }
+
+
+        const id = req.params.id
+        console.log(id)
+    const filter = {_id: ObjectId(id)}
+    const options = {upsert: true };
+    const updatedDoc = {
+        $set:{
+            advertise: "advertised"
+        }
+    }
+    const result = await productCollection.updateOne(filter , updatedDoc, options)
+    res.send({
+        success: true, 
+        data: result
+    })
+    }
+    catch(err){
+        console.log(`${err.message}`.bgRed)
+        res.send(err.message)
+    }
+})
+
+///advertise product load
+app.get('/product/advertise', async(req, res)=>{
+    const advertised = "advertised"
+    const  query = ({advertise : advertised}) 
+    const result = await productCollection.find(query).toArray()
+    res.send(result)
+})
+
+
+// admin role check api 
+app.get('/seller/verification/:email', async (req, res) => {
+    const email = req.params.email;
+    const query = { email }
+    const user = await usersCollection.findOne(query)
+    res.send({ isVerify: user?.verification === 'verified' })
+})
+
 app.listen(port, ()=> console.log('server is running '.blue))
