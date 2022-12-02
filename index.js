@@ -313,4 +313,54 @@ app.post('/products', async(req, res) =>{
   res.send(result)
 })
 
+
+// speciifc seller's  products load api 
+app.get('/products', verifyJWT , async(req, res)=>{
+  try{
+    const email = req.query.email
+    // console.log(email)
+    // console.log('token' , req.headers.authorization)
+    const decodedEmail = req.decoded.email;
+    console.log(decodedEmail)
+    if(email != decodedEmail){
+        return res.send({
+            success: false,
+            message: 'Forbidden access of not having access token '
+        })
+    }
+    const query  = {sellerEmail: email}
+    const orders = await productCollection.find(query).toArray()
+    res.send(orders)
+  }
+  catch(err){
+    console.log(err.message)
+    res.send({
+        success: false, 
+        message: "Data couldn't loaded from DB"
+    })
+  }
+})
+
+// delete specific product 
+app.delete('/product/delete/:id', async(req, res) =>{
+    const id = req.params.id
+    console.log(id)
+    const query = ({_id : ObjectId(id)})
+    const result = await productCollection.deleteOne(query)
+    if(result.deletedCount){
+        res.send({
+            success: true, 
+            message: 'Seller deleted successfully'
+
+        })
+    }
+    else{
+        res.send({
+            success: false, 
+            message: "something went wrong "
+
+        })
+    }
+})
+
 app.listen(port, ()=> console.log('server is running '.blue))
