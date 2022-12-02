@@ -408,9 +408,10 @@ app.get('/product/advertise', async(req, res)=>{
 })
 
 
-// admin role check api 
+// seller verification  check api 
 app.get('/seller/verification/:email', async (req, res) => {
     const email = req.params.email;
+    console.log(email)
     const query = { email }
     const user = await usersCollection.findOne(query)
     res.send({ isVerify: user?.verification === 'verified' })
