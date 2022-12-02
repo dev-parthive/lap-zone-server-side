@@ -286,12 +286,24 @@ app.get('/users/admin/:email', async (req, res) => {
     const user = await usersCollection.findOne(query)
     res.send({ isdAdmin: user?.role === 'admin' })
 })
+
+
+
 // seller role check api 
 app.get('/users/seller/:email', async (req, res) => {
     const email = req.params.email;
     const query = { email }
     const user = await usersCollection.findOne(query)
     res.send({ isSeller: user?.role === 'seller' })
+})
+
+
+// buyer role check api 
+app.get('/users/buyer/:email', async (req, res) => {
+    const email = req.params.email;
+    const query = { email }
+    const user = await usersCollection.findOne(query)
+    res.send({ isBuyer: user?.role === 'buyer' })
 })
 
 app.listen(port, ()=> console.log('server is running '.blue))
