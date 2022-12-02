@@ -279,4 +279,12 @@ app.put('/sellers/verfication/:id', verifyJWT,  async(req,res)=>{
     }
 })
 
+// admin role check api 
+app.get('/users/admin/:email', async (req, res) => {
+    const email = req.params.email;
+    const query = { email }
+    const user = await usersCollection.findOne(query)
+    res.send({ isdAdmin: user?.role === 'admin' })
+})
+
 app.listen(port, ()=> console.log('server is running '.blue))
