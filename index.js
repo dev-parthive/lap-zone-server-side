@@ -78,7 +78,7 @@ app.post('/users', async(req, res)=>{
 })
 
 // to get specific category product 
-app.get('/products/:name', async(req, res)=>{
+app.get('/products/:name',  async(req, res)=>{
     try{
         const name = req.params.name
         // console.log(name)
@@ -159,6 +159,18 @@ app.get('/orders', verifyJWT , async(req, res)=>{
         message: "Data couldn't loaded from DB"
     })
   }
+})
+
+//get specific order by order's id 
+app.get('/order/:id', async(req, res)=>{
+    const id = req.params.id
+    // console.log(id)
+    const query = {_id: ObjectId(id)};
+    const order = await ordersCollection.findOne(query)
+    res.send({
+        success: true, 
+        data: order
+    })
 })
 
 
